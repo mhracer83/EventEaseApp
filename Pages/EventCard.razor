@@ -1,0 +1,18 @@
+@page "/eventcard"
+@using EventEaseApp.Data
+
+<div class="event-card">
+    <h2>@Event.EventName</h2>
+    <p><strong>Date:</strong> @Event.EventDate.ToString("MMMM dd, yyyy")</p>
+    <p><strong>Location:</strong> @Event.EventLocation</p>
+</div>
+
+@code {
+    [Parameter] public EventModel Event { get; set; }
+
+    private void Register()
+    {
+        // Logic for registration goes here
+        Console.WriteLine($"Registering for {Event.EventName}");
+    }
+}

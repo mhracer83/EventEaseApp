@@ -1,0 +1,43 @@
+@page "/eventdetails/{eventName}"
+@using EventEaseApp.Data
+@inject EventService EventService
+@inject UserSessionService UserSessionService
+@inject NavigationManager Navigation
+
+<div>
+    <h2>Event Details</h2>
+    @if (eventModel != null)
+    {
+        <p><strong>Name:</strong> @eventModel.EventName</p>
+        <p><strong>Date:</strong> @eventModel.EventDate.ToString("MMMM dd, yyyy")</p>
+        <p><strong>Location:</strong> @eventModel.EventLocation</p>
+        <button @onclick="NavigateToRegistration" class="btn btn-primary">Register</button>
+        <p></p>
+        <h3>Attendees:</h3>
+        <ul>
+            @foreach (var attendee in eventModel.Attendees)
+            {
+                <li>@attendee.Name - @attendee.Email</li>
+            }
+        </ul>
+    }
+    else
+    {
+        <p>Event not found.</p>
+    }
+</div>
+
+@code {
+    [Parameter] public string EventName { get; set; }
+    private EventModel eventModel;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        eventModel = await Task.Run(() => EventService.GetEvents().FirstOrDefault(e => e.EventName == EventName));
+    }
+
+    private void NavigateToRegistration()
+    {
+        Navigation.NavigateTo($"/eventregistration/{eventModel.EventName}");
+    }
+}

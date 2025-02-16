@@ -1,0 +1,27 @@
+﻿@inherits LayoutComponentBase
+@using EventEaseApp.Data
+@inject UserSessionService UserSessionService
+
+<div class="page">
+    <header class="header">
+        @if (UserSessionService.IsSessionActive)
+        {
+            <div class="user-session">
+                <p><strong>User:</strong> @UserSessionService.UserName</p>
+                <p><strong>Session Started:</strong> @UserSessionService.SessionStartTime.ToString("g")</p>
+                <p><strong>Duration:</strong> @UserSessionService.SessionDuration.ToString(@"hh\:mm\:ss")</p>
+            </div>
+        }
+    </header>
+    <div class="content">
+        @if (UserSessionService.IsSessionActive)
+        {
+            <div class="sidebar">
+                <NavMenu />
+            </div>
+        }
+        <div class="main">
+            @Body
+        </div>
+    </div>
+</div>

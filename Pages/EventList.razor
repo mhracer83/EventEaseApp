@@ -1,0 +1,80 @@
+@page "/eventlist"
+@using EventEaseApp.Data
+@inject EventService EventService
+@inject NavigationManager Navigation
+
+<div>
+    @foreach (var eventItem in Events)
+    {
+        <div class="event-container">
+            <EventCard Event="eventItem" />
+            <button @onclick="() => ConfirmDelete(eventItem)" class="btn btn-danger">Delete</button>
+            <button @onclick="() => NavigateToDetails(eventItem.EventName)" class="btn btn-info">View Details</button>
+        </div>
+    }
+</div>
+
+@if (showConfirmationDialog)
+{
+    <div class="modal" tabindex="-1" style="display:block; background-color:rgba(0,0,0,0.5);">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Confirm Deletion</h5>
+                    <button type="button" class="btn-close" @onclick="CloseConfirmationDialog" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to delete the event "@eventToDelete.EventName"?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @onclick="CloseConfirmationDialog">Cancel</button>
+                    <button type="button" class="btn btn-danger" @onclick="DeleteConfirmedEvent">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<style>
+    .event-container {
+        margin-bottom: 20px; /* Adjust the value as needed for spacing */
+    }
+</style>
+
+@code {
+    private List<EventModel> Events = new List<EventModel>();
+    private bool showConfirmationDialog = false;
+    private EventModel eventToDelete;
+
+    protected override void OnInitialized()
+    {
+        Events = EventService.GetEvents();
+    }
+
+    private void NavigateToDetails(string eventName)
+    {
+        Navigation.NavigateTo($"/eventdetails/{eventName}");
+    }
+
+    private void ConfirmDelete(EventModel eventItem)
+    {
+        eventToDelete = eventItem;
+        showConfirmationDialog = true;
+    }
+
+    private void CloseConfirmationDialog()
+    {
+        showConfirmationDialog = false;
+        eventToDelete = null;
+    }
+
+    private void DeleteConfirmedEvent()
+    {
+        if (eventToDelete != null)
+        {
+            EventService.DeleteEvent(eventToDelete.EventName);
+            Events = EventService.GetEvents(); // Refresh the event list
+            CloseConfirmationDialog();
+        }
+    }
+}

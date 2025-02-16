@@ -1,0 +1,37 @@
+@page "/"
+@using System.ComponentModel.DataAnnotations
+@using EventEaseApp.Data
+@inject UserSessionService UserSessionService
+@inject NavigationManager Navigation
+
+<div>
+    <h2>Login</h2>
+    <EditForm Model="loginModel" OnValidSubmit="HandleValidSubmit">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="form-group">
+            <label for="username">Username:</label>
+            <InputText id="username" class="form-control" @bind-Value="loginModel.UserName" />
+            <ValidationMessage For="@(() => loginModel.UserName)" />
+        </div>
+
+        <button type="submit" class="btn btn-primary">Login</button>
+    </EditForm>
+</div>
+
+@code {
+    private LoginModel loginModel = new LoginModel();
+
+    private void HandleValidSubmit()
+    {
+        UserSessionService.UserName = loginModel.UserName;
+        Navigation.NavigateTo("/eventlist"); // Redirect to the event list page after login
+    }
+
+    public class LoginModel
+    {
+        [Required(ErrorMessage = "Username is required.")]
+        public string UserName { get; set; }
+    }
+}

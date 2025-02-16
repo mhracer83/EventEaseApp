@@ -1,0 +1,70 @@
+@page "/eventregistration/{eventName}"
+@using EventEaseApp.Data
+@inject EventService EventService
+@inject NavigationManager Navigation
+
+<div>
+    <h2>Register for @EventName</h2>
+    <EditForm Model="registrationModel" OnValidSubmit="HandleValidSubmit" OnInvalidSubmit="HandleInvalidSubmit">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="form-group">
+            <label for="name">Name:</label>
+            <InputText id="name" class="form-control" @bind-Value="registrationModel.Name" @oninput="HideSuccessMessage" />
+            <ValidationMessage For="@(() => registrationModel.Name)" />
+        </div>
+
+        <div class="form-group">
+            <label for="email">Email:</label>
+            <InputText id="email" class="form-control" @bind-Value="registrationModel.Email" @oninput="HideSuccessMessage" />
+            <ValidationMessage For="@(() => registrationModel.Email)" />
+        </div>
+        <br>
+        <button type="submit" class="btn btn-primary">Register</button>
+    </EditForm>
+
+    @if (showSuccessMessage)
+    {
+        <div class="alert alert-success mt-3 fade-out" role="alert">
+            Successfully registered @successName for @EventName!
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter] public string EventName { get; set; }
+    private RegistrationModel registrationModel = new RegistrationModel();
+    private bool showSuccessMessage = false;
+    private string successName;
+
+    private async Task HandleValidSubmit()
+    {
+        // Add attendee to the event
+        EventService.AddAttendee(EventName, new Attendee { Name = registrationModel.Name, Email = registrationModel.Email });
+        successName = registrationModel.Name;
+        showSuccessMessage = true;
+
+        // Reset the form
+        registrationModel = new RegistrationModel();
+
+        // Hide the success message after the animation completes (8 seconds total)
+        await Task.Delay(8000);
+        showSuccessMessage = false;
+        StateHasChanged();
+    }
+
+    private void HandleInvalidSubmit()
+    {
+        // Hide the success message on invalid submit
+        showSuccessMessage = false;
+        StateHasChanged();
+    }
+
+    private void HideSuccessMessage(ChangeEventArgs e)
+    {
+        // Hide the success message when the user starts typing again
+        showSuccessMessage = false;
+        StateHasChanged();
+    }
+}
