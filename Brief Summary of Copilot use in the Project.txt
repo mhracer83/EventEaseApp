@@ -1,0 +1,9 @@
+Brief Summary of how Copilot Assisted in the Development Process:
+
+For me, Copilot was very helpful in quickly creating the overall structure of various parts of the code. 
+It assisted in writing structure anywhere from html to code blocks within Blazor components. Copilot was 
+also very useful for finding and fixing errors in my code. If something wasn't working right I could just
+show Copilot some of my code and explain the error I was getting. Within seconds Copilot would have a working
+solution that I was able to integrate and fix my errors. Some issues took a little bit of back and forth chatting
+with Copilot to resolve, but without Copilot it would have taken a lot longer to figure certain things out, so I
+for one am very glad Copilot is there to help!
